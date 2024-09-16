@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+        <title>Character Sheet. App.</title>
+        <meta name="application-name" content="Character Sheet. App.">
+        <meta name="description" content="Online character sheet for tabletop role playing games.">
+
+        <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+        <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="./manifest.json">
+        <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="apple-mobile-web-app-title" content="CharSheetApp">
+        <meta name="theme-color" content="#ffffff">
+        <meta name="msapplication-config" content="./browserconfig.xml" />
+
+        <link rel="stylesheet" href="./styles.css">
+    </head>
+    <body>
+        <div class="alertContainer">
+            <div class="alert alert-unsaved" hidden>Unsaved changes... <button type="button" class="btn-save btn-sm">Save</button></div>
+            <div class="alert alert-delete" hidden>
+                <span>Deleting character... <button type="button" class="btn-delete-undo btn-sm" data-key="">Undo</button></span>
+                <span class="delete-timeout"></span>
+            </div>
+        </div>
+        <modal-mib id="alert-main"  hidden></modal-mib>
+        <modal-mib id="dialog-new" hidden></modal-mib>
+        <modal-mib id="dialog-load" hidden></modal-mib>
+        <modal-mib id="dialog-backup" hidden></modal-mib>
+        <modal-mib id="dialog-restore" hidden></modal-mib>
+        <modal-mib id="dialog-delete" hidden></modal-mib>
+        <modal-mib id="dialog-auth" hidden></modal-mib>
+        <modal-mib id="dialog-sync" hidden></modal-mib>
+        <modal-mib id="dialog-spells" hidden></modal-mib>
+
+        <div class="container">
+            <action-menu></action-menu>
+            <main></main>
+            <footer>
+                <h4>Character Sheet. App.</h4>
+                <ul>
+                    <li><button type="button" class="btn-plain btn-help btn-dialog">Help</button></li>
+                    <li>Created by <a href="https://derikbadman.com">Derik A Badman</a></li>
+                    <li><a href="https://github.com/derikb/character-sheet-app">Github</a></li>
+                </ul>
+            </footer>
+            <footer-nav></footer-nav>
+        </div>
+
+        <template id="introAlert">
+            <span slot="header">Character Sheet. App.</span>
+            <p>An online character sheet for tabletop role-playing games, usable offline (in some browsers).</p>
+            <p>Designed for modern browsers, if all else fails Chrome is your best bet and Safari is your worst bet.</p>
+            <p><strong>Warning:</strong> Unless you login, character data is saved to your browser's local storage. This means it can be erased if you delete browser data and will not automatically transfer between browsers even on the same computer. Please Save and Backup often (or at least at the end of every gaming session)!</p>
+            <p>This message will only appear until you save your first character.</p>
+        </template>
+        <template id="helpDialog">
+            <span slot="header">Help</span>
+
+            <h2>Most importantly</h2>
+            <ul>
+                <li>This app only saves data to your browsers' local storage. If your browser's data is deleted, your saved characters will be deleted. Use the backup options to save character data when you make changes.</li>
+                <li>To save remotely, login via the "Login" button and then use the Sync option to save data remotely. Right now the only Auth is via Google.</li>
+                <li>This app is designed for modern web browsers.</li>
+                <li>After you've loaded the app, it will work offline in Chrome, Firefox, and Safari (desktop) as well as Safari (iOS) and Chrome (Android). Chrome (iOS) does not seem to work offline, and I haven't tried any other browsers.</li>
+            </ul>
+
+            <h2>Actions</h2>
+
+            <ul>
+                <li><strong>Save</strong> This will save the current character to local storage. If the character already exists it will update.</li>
+                <li><strong>Load</strong> This will show you a list of saved characters (if you have any). Clicking on a character's name will load that character. Note: You will lose any unsaved data if you load a character without saving the one currently displayed.</li>
+                <li><strong>New Character</strong> This will load up a new/blank character sheet. Note: You will lose any unsaved data if you create a new character without saving the one currently displayed.</li>
+                <li><strong>File Backup</strong> This will create data in the JSON format that can be loaded into this app in another browser/device. It will either:
+                    <ul>
+                        <li>Generate a download file with the currently viewed character's backup data.</li>
+                        <li>Pop up the currently viewed character's backup data so it can be copied and pasted somewhere else.</li>
+                    </ul>
+                </li>
+                <li><strong>Email Backup</strong> This will open your default email client and start a new message containing the currently viewed character's backup data as well as instructions on how to use that data.</li>
+                <li><strong>Restore Backup</strong> This opens a form for uploading a file or pasting in character backup data to save that character in the current browser. If the character already exists they will be updated to match the restored data (so be careful).</li>
+                <li><strong>Login</strong> Authenticate via a Google account to save data remotely.</li>
+                <li><strong>Sync/Logout</strong> Download/Upload data to/from the remote database; logout.</li>
+            </ul>
+
+            <h2>Character Sheet</h2>
+
+            <ul>
+                <li>Click on data or empty areas to edit. Data is NOT automatically saved; you must hit the <strong>Save</strong> button (or use the keyboard shortcut).</li>
+                <li>Press <em>enter</em> while editing any list field to add another empty field to the list. (Use <em>Shift+Enter</em> to add a new line.)</li>
+                <li><ul>For 5e:</ul>
+                    <li>Ability, saving throw, and skill modifiers are all automatically calculated when the proficiency, ability, save, or skill fields are changed.</li>
+                <li>All other fields are manually changed.</li>
+                <li>Spell lists only appear if the corresponding spell slot is greater than 0.</li>
+                </ul></li>
+            </ul>
+
+            <h2>Keyboard Shortcuts</h2>
+            <table>
+                <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><em>Ctrl+Shift+ArrowDown</em></td><td>Save current character</td></tr>
+                    <tr><td><em>Ctrl+Shift+ArrowLeft</em></td><td>Switch Tabs</td></tr>
+                    <tr><td><em>Ctrl+Shift+ArrowUp</em></td><td>Toggle Load Character menu (and focus on it).</td></tr>
+                    <tr><td><em>Esc</em></td><td>Close modals/dialogs.</td></tr>
+                    <tr><td><em>ArrowRight, ArrowLeft</em></td><td>Navigate the action toolbar at the top.</td></tr>
+                </tbody>
+            </table>
+        </template>
+
+        <template id="backupModal">
+            <span slot="header">Backup Characters</span>
+            <form id="form_backup_download" target="_self">
+                <fieldset>
+                    <legend tabindex="-1">Pick characters to download.</legend>
+                    <ul class="character_downloads"></ul>
+                </fieldset>
+                <fieldset>
+                    <legend>Pick a format</legend>
+                    <ul>
+                    <li><label><input type="radio" name="format" value="file" checked> File download</label></li>
+                    <li><label><input type="radio" name="format" value="email"> Email data</label></li>
+                </fieldset>
+                <button type="submit">Download</button>
+                <button type="button" class="close">Cancel</button>
+            </form>
+        </template>
+
+        <template id="restoreModal">
+            <span slot="header">Restore Characters</span>
+            <form id="form_backup_restore" target="_self">
+                <label for="files">Restore from file</label>
+                <input type="file" id="files" name="files" />
+                <p>or</p>
+                <label for="backup_data">Paste the character backup data</label>
+                <textarea id="backup_data" name="backup_data"></textarea>
+                <button type="submit">Restore</button>
+                <button type="button" class="close">Cancel</button>
+            </form>
+        </template>
+
+        <template id="deleteModal">
+            <span slot="header">Delete Characters</span>
+            <p>This will delete locally stored characters. If you have saved characters remotely, use the sync modal to remove the remote copies.</p>
+            <ul id="delete_list">
+            </ul>
+        </template>
+
+        <template id="createModal">
+            <span slot="header">New Character</span>
+            <form id="form_new" target="_self">
+                <label for="char_type">Character Type</label>
+                <select name="char_type" id="char_type">
+                </select>
+                <button type="submit" class="mg-top">Create</button>
+            </form>
+        </template>
+
+        <template id="loadModal">
+            <span slot="header">Load Character</span>
+            <ul id="character_list">
+            </ul>
+        </template>
+
+        <template id="spellModal">
+            <span slot="header">Spells</span>
+            <ul id="spell_list"></ul>
+        </template>
+
+        <template id="authSignInModal">
+            <span slot="header">Sign-in</span>
+            <div>
+                <p>By signing in, you can save data remotely, and then access your characters from any browser/device.</p>
+                <p>Your auth credentials are saved for use with Google's Firebase Firestore. I get access to very little information about you, other than email and some other publicly available profile data.</p>
+                <p><button type="button" id="googleSignIn">Sign in with Google</button></p>
+            </div>
+        </template>
+
+        <template id="authSignOutModal">
+            <span slot="header">You are signed in...</span>
+            <div>
+                <p>Sync data between the remote database and your local browser. If you are using multiple devices make sure to save and sync before switching between them. <strong>Don't forget to backup.</strong></p>
+                <p><button type="button" id="syncData">Sync with Remote</button></p>
+            </div>
+            <hr/>
+            <div class="mg-top">
+                <p>By signing out you may lose any unsaved data.</p>
+                <p><button type="button" id="signOut">Sign Out</button></p>
+            </div>
+        </template>
+
+        <template id="syncModal">
+            <span slot="header">Sync Characters with Remote</span>
+            <div>
+                <p><strong>WARNING:</strong> There is currently no merge conflict resolution on the syncing. You can either download or upload but both operations will overwrite data <em>NOT</em> merge it. (I still need to figure out how to handle that well.)</p>
+                <p>If you are working with multiple devices/browsers, please be aware of this. Don't edit in both places without first saving and up/downloading.</p>
+                <ul id="characterSyncList">
+                </ul>
+            </div>
+        </template>
+
+        <script type="module" src="./index.js"></script>
+        <script nomodule>
+            alert('Sorry, you must use a modern browser for this to code to work.');
+        </script>
+    </body>
+</html>
