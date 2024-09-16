@@ -5,9 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-        <title>Character Sheet. App.</title>
-        <meta name="application-name" content="Character Sheet. App.">
-        <meta name="description" content="Online character sheet for tabletop role playing games.">
+        <title>Legends - Character Sheet</title>
+        <meta name="application-name" content="Legends - Character Sheet">
+        <meta name="description" content="Online character sheet for the Legends tabletop role playing game.">
 
         <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
         <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32">
@@ -42,10 +42,10 @@
             <action-menu></action-menu>
             <main></main>
             <footer>
-                <h4>Character Sheet. App.</h4>
+                <h4>Legends - Character Sheet</h4>
                 <ul>
                     <li><button type="button" class="btn-plain btn-help btn-dialog">Help</button></li>
-                    <li>Created by <a href="https://derikbadman.com">Derik A Badman</a></li>
+                    <li>Created by <a href="https://christianivanaj.com/" target="_blank">Christian Ivanaj</a></li>
                     <li><a href="https://github.com/derikb/character-sheet-app">Github</a></li>
                 </ul>
             </footer>
@@ -53,16 +53,16 @@
         </div>
 
         <template id="introAlert">
-            <span slot="header">Character Sheet. App.</span>
-            <p>An online character sheet for tabletop role-playing games, usable offline (in some browsers).</p>
-            <p>Designed for modern browsers, if all else fails Chrome is your best bet and Safari is your worst bet.</p>
+            <span slot="header">Legends Character Sheet</span>
+            <p>An online character sheet for the Legends Tabletop RPG, usable offline (in most browsers).</p>
+            <p>Designed for modern browsers, please update if needed.</p>
             <p><strong>Warning:</strong> Unless you login, character data is saved to your browser's local storage. This means it can be erased if you delete browser data and will not automatically transfer between browsers even on the same computer. Please Save and Backup often (or at least at the end of every gaming session)!</p>
             <p>This message will only appear until you save your first character.</p>
         </template>
         <template id="helpDialog">
             <span slot="header">Help</span>
 
-            <h2>Most importantly</h2>
+            <h2>Most Importantly</h2>
             <ul>
                 <li>This app only saves data to your browsers' local storage. If your browser's data is deleted, your saved characters will be deleted. Use the backup options to save character data when you make changes.</li>
                 <li>To save remotely, login via the "Login" button and then use the Sync option to save data remotely. Right now the only Auth is via Google.</li>
@@ -206,7 +206,7 @@
 
         <script type="module" src="./index.js"></script>
         <script nomodule>
-            alert('Sorry, you must use a modern browser for this to code to work.');
+            alert('Sorry, you must use a modern browser for this site to work.');
         </script>
     </body>
 </html>
